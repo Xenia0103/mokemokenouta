@@ -21,7 +21,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // Lucideアイコンのスタブコンポーネント（ブラウザ版用）
+        // Lucideアイコンのスタブコンポーネント
         const RefreshCw = () => <i data-lucide="refresh-cw"></i>;
         const CheckCircle2 = ({ size }) => <i data-lucide="check-circle-2" style={{width: size, height: size}}></i>;
         const Play = ({ size }) => <i data-lucide="play" style={{width: size, height: size}}></i>;
@@ -64,12 +64,12 @@
             const [selectedIndices, setSelectedIndices] = useState([]);
             const [isProcessing, setIsProcessing] = useState(false);
 
-            // アイコンの再レンダリング用
             useEffect(() => {
                 if (window.lucide) window.lucide.createIcons();
             });
 
             const appearingAnimals = useMemo(() => {
+                if (!currentName) return [];
                 return currentName.split('').map(char => CHAR_TO_ANIMAL[char.toUpperCase()]).filter(Boolean);
             }, [currentName]);
 
@@ -97,11 +97,12 @@
 
             const handleCapture = () => {
                 if (selectedIndices.length === 0 || isProcessing) return;
-                setIsProcessing(true);
+                
                 const selectedAnimals = selectedIndices.map(i => appearingAnimals[i]);
 
+                // クリア判定
                 if (selectedAnimals.length === 1 && selectedAnimals[0].name === 'OUMA' && selectedAnimals[0].pattern === 1) {
-                    setTimeout(() => setScreen('clear'), 500);
+                    setScreen('clear');
                     return;
                 }
 
@@ -111,7 +112,8 @@
                 if (selectedAnimals.length === 1) {
                     const animal = selectedAnimals[0];
                     if (animal.pattern === 2) {
-                        nextName = currentName;
+                        // 逃走: 名前を空白にする
+                        nextName = "";
                         nextDisplay = { type: 'escape', text: '逃げられた！' };
                     } else {
                         nextName = animal.name;
@@ -122,7 +124,8 @@
                     const hasDuplicate = new Set(species).size !== species.length;
 
                     if (hasDuplicate) {
-                        nextName = currentName;
+                        // 逃走: 名前を空白にする
+                        nextName = "";
                         nextDisplay = { type: 'escape', text: '仲間割れして逃げられた！' };
                     } else {
                         const specialOrder = ['OHEBI', 'OTANUKI', 'OTORA', 'OSARU'];
@@ -134,18 +137,15 @@
                     }
                 }
 
-                setDisplayName(nextDisplay.type === 'escape' ? "逃走" : nextName);
+                // 即座に状態を更新
+                setDisplayName(nextDisplay.type === 'escape' ? "" : nextName);
                 setDisplayImage(nextDisplay);
-
-                setTimeout(() => {
-                    if (nextDisplay.type !== 'escape') setCurrentName(nextName);
-                    setSelectedIndices([]);
-                    setIsProcessing(false);
-                }, 2000);
+                setCurrentName(nextName);
+                setSelectedIndices([]);
             };
 
             const AnimalImage = ({ animal, className = "", style = {} }) => {
-                const src = `images/${animal.name}_${animal.pattern}.PNG`;
+                const src = `images/${animal.name}_${animal.pattern}.png`;
                 return (
                     <div className={`relative overflow-hidden bg-gray-100 flex items-center justify-center ${className}`} style={style}>
                         <img 
@@ -201,29 +201,29 @@
                                 </div>
                                 <div className="w-2/3 h-full flex flex-col">
                                     <div className="h-1/2 w-full overflow-hidden border-b border-white">
-                                        <AnimalImage animal={animals[1]} className="w-[150%] h-[200%] max-w-none" style={{ transform: 'translate(-33%, 0)' }} />
+                                        <AnimalImage animal={animals[1]} className="w-[150%] h-[200%] max-w-none" style={{ transform: 'translate(-33.33%, 0)' }} />
                                     </div>
                                     <div className="h-1/2 w-full overflow-hidden">
-                                        <AnimalImage animal={animals[2]} className="w-[150%] h-[200%] max-w-none" style={{ transform: 'translate(-33%, -50%)' }} />
+                                        <AnimalImage animal={animals[2]} className="w-[150%] h-[200%] max-w-none" style={{ transform: 'translate(-33.33%, -50%)' }} />
                                     </div>
                                 </div>
                             </React.Fragment>
                         )}
                         {count === 4 && (
                             <React.Fragment>
-                                <div className="w-1/4 h-full overflow-hidden border-r border-white">
-                                    <AnimalImage animal={animals[0]} className="w-[400%] h-full max-w-none" />
+                                <div className="w-[33.33%] h-full overflow-hidden border-r border-white">
+                                    <AnimalImage animal={animals[0]} className="w-[300%] h-full max-w-none" />
                                 </div>
-                                <div className="w-1/2 h-full flex flex-col border-r border-white">
+                                <div className="w-[33.33%] h-full flex flex-col border-r border-white">
                                     <div className="h-1/2 w-full overflow-hidden border-b border-white">
-                                        <AnimalImage animal={animals[1]} className="w-[200%] h-[200%] max-w-none" style={{ transform: 'translate(-25%, 0)' }} />
+                                        <AnimalImage animal={animals[1]} className="w-[300%] h-[200%] max-w-none" style={{ transform: 'translate(-33.33%, 0)' }} />
                                     </div>
                                     <div className="h-1/2 w-full overflow-hidden">
-                                        <AnimalImage animal={animals[2]} className="w-[200%] h-[200%] max-w-none" style={{ transform: 'translate(-25%, -50%)' }} />
+                                        <AnimalImage animal={animals[2]} className="w-[300%] h-[200%] max-w-none" style={{ transform: 'translate(-33.33%, -50%)' }} />
                                     </div>
                                 </div>
-                                <div className="w-1/4 h-full overflow-hidden">
-                                    <AnimalImage animal={animals[3]} className="w-[400%] h-full max-w-none" style={{ transform: 'translateX(-75%)' }} />
+                                <div className="w-[33.33%] h-full overflow-hidden">
+                                    <AnimalImage animal={animals[3]} className="w-[300%] h-full max-w-none" style={{ transform: 'translateX(-66.66%)' }} />
                                 </div>
                             </React.Fragment>
                         )}
@@ -257,12 +257,12 @@
                                     </div>
                                     <div className="flex flex-col justify-center items-center bg-indigo-50 rounded-2xl p-8 border-4 border-indigo-100">
                                         <span className="text-xs uppercase tracking-widest text-indigo-400 font-bold mb-2">Current Identity</span>
-                                        <span className="text-4xl font-black text-indigo-900 tracking-widest break-all text-center">{displayName}</span>
+                                        <span className="text-4xl font-black text-indigo-900 tracking-widest break-all text-center h-12 flex items-center">{displayName}</span>
                                     </div>
                                 </div>
                                 <div className="space-y-3">
                                     <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Shadow Area</label>
-                                    <div className="flex flex-wrap gap-3 p-4 bg-slate-100 rounded-2xl min-h-[120px] justify-center items-center">
+                                    <div className="flex flex-wrap gap-3 p-4 bg-slate-100 rounded-2xl min-h-[120px] justify-center items-center relative">
                                         {appearingAnimals.map((animal, idx) => (
                                             <button key={`${currentName}-${idx}`} onClick={() => toggleSelect(idx)} disabled={isProcessing} className={`relative w-20 h-20 rounded-xl transition-all border-2 ${selectedIndices.includes(idx) ? 'border-indigo-500 ring-4 ring-indigo-200 scale-105' : 'border-transparent'}`}>
                                                 <div className="absolute inset-0 bg-slate-800 flex items-center justify-center p-2">
@@ -273,18 +273,25 @@
                                                 {selectedIndices.includes(idx) && <div className="absolute top-1 right-1 bg-indigo-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">{selectedIndices.indexOf(idx) + 1}</div>}
                                             </button>
                                         ))}
+                                        {appearingAnimals.length === 0 && (
+                                            <div className="text-slate-400 font-bold text-center animate-pulse">
+                                                ここには動物がいないようです...
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <button onClick={handleCapture} disabled={selectedIndices.length === 0 || isProcessing} className={`w-full py-4 rounded-2xl font-black text-xl shadow-lg ${selectedIndices.length > 0 && !isProcessing ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400'}`}>
-                                    {isProcessing ? 'CAPTURING...' : `CAPTURE (${selectedIndices.length})`}
+                                    CAPTURE ({selectedIndices.length})
                                 </button>
                             </div>
                         )}
                         {screen === 'clear' && (
-                            <div className="flex flex-col items-center justify-center py-24 px-8 text-center">
-                                <div className="mb-6 p-4 bg-yellow-100 rounded-full text-yellow-500"><CheckCircle2 size={64} /></div>
-                                <h1 className="text-5xl font-black text-slate-800 mb-4">GAME CLEAR!</h1>
-                                <button onClick={() => setScreen('title')} className="px-10 py-4 bg-slate-800 text-white font-bold rounded-full flex items-center gap-2">
+                            <div className="flex flex-col items-center justify-center py-20 px-8 text-center animate-in zoom-in duration-500">
+                                <div className="w-48 h-48 mb-6 border-4 border-yellow-400 rounded-2xl overflow-hidden shadow-2xl">
+                                    <AnimalImage animal={ANIMAL_DATA.OUMA} pattern={1} className="w-full h-full" />
+                                </div>
+                                <h1 className="text-5xl font-black text-indigo-900 mb-8">お馬さん捕獲！</h1>
+                                <button onClick={() => setScreen('title')} className="px-10 py-4 bg-slate-800 text-white font-bold rounded-full flex items-center gap-2 hover:bg-slate-900 transition-colors">
                                     <RefreshCw /> BACK TO TITLE
                                 </button>
                             </div>
