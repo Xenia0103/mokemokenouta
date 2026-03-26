@@ -213,7 +213,7 @@
                 setIsProcessing(true);
                 const selectedAnimals = selectedIndices.map(i => appearingAnimals[i]);
 
-                // クリア判定（お馬さんの場合は即座にクリア画面へ）
+                // クリア判定
                 if (selectedAnimals.length === 1 && selectedAnimals[0].name === 'OUMA' && selectedAnimals[0].pattern === 1) {
                     playSE('clear');
                     setScreen('clear');
@@ -245,7 +245,7 @@
 
                     if (hasDuplicate) {
                         isEscape = true;
-                        targetName = "???"; // 重複逃走判定
+                        targetName = "???";
                     } else {
                         const specialOrder = ['OSARU', 'OTANUKI', 'OTORA', 'OHEBI'];
                         const isSpecial = selectedAnimals.length === 4 && 
@@ -254,11 +254,9 @@
                     }
                 }
 
-                // まずは正体を表示し、名前は判定中のため「???」にする
                 setDisplayImage(previewDisplay);
                 setDisplayName("???");
                 
-                // 1秒後に判定結果を適用
                 setTimeout(() => {
                     if (isEscape) {
                         playSE('escape');
@@ -268,7 +266,6 @@
                     } else {
                         playSE('capture');
                         setShowSuccessToast(true);
-                        // 成功メッセージは一定時間で消す
                         setTimeout(() => setShowSuccessToast(false), 1200);
                         
                         setDisplayName(targetName);
@@ -387,7 +384,7 @@
                                 <button onClick={handleStart} className="px-12 py-4 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition-all shadow-lg flex items-center gap-2 text-xl active:scale-95">
                                     <Play size={24} /> START
                                 </button>
-                                <p className="mt-8 text-slate-500 font-medium">お馬さんを捕獲して窮地を突破せよ！</p>
+                                <p className="mt-8 text-slate-500 text-lg font-bold tracking-wide">お馬さんを捕獲して窮地を突破せよ！</p>
                             </div>
                         )}
                         {screen === 'game' && (
@@ -476,7 +473,8 @@
                                 <div className="w-48 h-48 mb-6 border-4 border-yellow-400 rounded-2xl overflow-hidden shadow-2xl bg-white">
                                     <AnimalImage animal={{...ANIMAL_DATA.OUMA, pattern: 1}} className="w-full h-full" />
                                 </div>
-                                <h1 className="text-5xl font-black text-indigo-900 mb-8 tracking-tighter">お馬さん捕獲！</h1>
+                                <h1 className="text-3xl font-black text-indigo-900 mb-2 tracking-tighter">お馬さん捕獲！</h1>
+                                <h2 className="text-5xl font-black text-indigo-900 mb-8 tracking-tighter">ゲームクリア！</h2>
                                 <button onClick={() => { playSE('click'); setScreen('title'); }} className="px-10 py-4 bg-slate-800 text-white font-bold rounded-full flex items-center gap-2 hover:bg-slate-900 transition-colors active:scale-95">
                                     <RefreshCw /> BACK TO TITLE
                                 </button>
